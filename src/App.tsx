@@ -12,6 +12,7 @@ import OrdersPage from './pages/OrdersPage';
 import LoadingScreen from './components/LoadingScreen';
 import { CartProvider } from './context/CartContext';
 import { AuthProvider } from './context/AuthContext';
+import { WishlistProvider } from './context/WishlistContext';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home');
@@ -62,15 +63,17 @@ function App() {
   return (
     <AuthProvider>
       <CartProvider>
-        <LoadingScreen isLoading={isLoading} />
-        <div className="min-h-screen flex flex-col bg-gray-50">
-          <Navbar currentPage={currentPage} onPageChange={setCurrentPage} />
-          <Cart />
-          <main className="flex-grow">
-            {renderPage()}
-          </main>
-          <Footer onPageChange={setCurrentPage} />
-        </div>
+        <WishlistProvider>
+          <LoadingScreen isLoading={isLoading} />
+          <div className="min-h-screen flex flex-col bg-gray-50">
+            <Navbar currentPage={currentPage} onPageChange={setCurrentPage} />
+            <Cart />
+            <main className="flex-grow">
+              {renderPage()}
+            </main>
+            <Footer onPageChange={setCurrentPage} />
+          </div>
+        </WishlistProvider>
       </CartProvider>
     </AuthProvider>
   );

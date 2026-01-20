@@ -12,28 +12,28 @@ interface Achievement {
 const achievements: Achievement[] = [
   {
     id: 1,
-    image: '/achievements/quality-cert.jpg',
+    image: '/achievments/iso-22000.jpg',
     title: 'ISO 22000 Certification',
     description: 'Achieved international food safety certification, marking our commitment to the highest quality standards in dry fruits and spices processing.',
     year: '2020'
   },
   {
     id: 2,
-    image: '/achievements/expansion.jpg',
+    image: '/achievments/expansion.jpg',
     title: 'National Expansion',
     description: 'Successfully expanded operations to 15 major cities across India, bringing premium quality dry fruits to more households.',
     year: '2018'
   },
   {
     id: 3,
-    image: '/achievements/sustainable.jpg',
+    image: '/achievments/sustainable.jpg',
     title: 'Sustainable Sourcing',
     description: 'Established direct partnerships with 1000+ farmers, ensuring sustainable sourcing practices and supporting local communities.',
     year: '2019'
   },
   {
     id: 4,
-    image: '/achievements/award.jpg',
+    image: '/achievments/award.jpg',
     title: 'Excellence Award',
     description: 'Received the prestigious Food Industry Excellence Award for our commitment to quality and customer satisfaction.',
     year: '2021'
