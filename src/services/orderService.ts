@@ -17,11 +17,11 @@ interface OrderData {
     phone: string;
   };
   paymentMethod: string;
-  orderDate: Date;
+  createdAt: string;
   status: 'pending';
 }
 
-export const placeOrder = async (orderData: Omit<OrderData, 'orderDate' | 'status'>) => {
+export const placeOrder = async (orderData: Omit<OrderData, 'createdAt' | 'status'>) => {
   try {
     // Verify authentication
     const currentUser = auth.currentUser;
@@ -46,7 +46,7 @@ export const placeOrder = async (orderData: Omit<OrderData, 'orderDate' | 'statu
     // Create the order object with metadata
     const orderWithMetadata = {
       ...orderData,
-      orderDate: new Date(),
+      createdAt: new Date().toISOString(),
       status: 'pending' as const
     };
 

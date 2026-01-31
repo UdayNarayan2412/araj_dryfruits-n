@@ -75,7 +75,7 @@ export interface Order {
   paymentStatus: PaymentStatus;
   shippingAddress: {
     fullName: string;
-    street: string;
+    address: string;
     city: string;
     state: string;
     pinCode: string;
@@ -87,8 +87,13 @@ export interface Order {
   trackingInfo?: TrackingUpdate[];
 }
 
-export interface OrderItem extends CartItem {
+export interface OrderItem {
+  id: string;
+  name: string;
+  price: number;
   quantity: number;
+  image: string;
+  weight: string;
 }
 
 export type OrderStatus = 

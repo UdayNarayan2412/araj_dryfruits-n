@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Order, OrderStatus } from '../types';
-import { collection, query, where, orderBy, getDocs } from 'firebase/firestore';
+import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { Package, Truck, Clock, CheckCircle, AlertCircle, XCircle, ChevronDown, ChevronUp } from 'lucide-react';
 
@@ -66,16 +66,48 @@ const OrdersPage: React.FC = () => {
 
       try {
         const ordersRef = collection(db, 'orders');
+        // Query without orderBy to avoid composite index requirements
         const q = query(
           ordersRef,
-          where('userId', '==', currentUser.uid),
-          orderBy('createdAt', 'desc')
+          where('userId', '==', currentUser.uid)
         );
         const querySnapshot = await getDocs(q);
-        const ordersData = querySnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        })) as Order[];
+        const ordersData = querySnapshot.docs.map(doc => {
+          const data = doc.data();
+          // Handle potential legacy data structure
+          let createdAt = data.createdAt;
+          
+          // Handle Firestore Timestamp for createdAt
+          if (createdAt && typeof createdAt.toDate === 'function') {
+            createdAt = createdAt.toDate().toISOString();
+          } else if (createdAt instanceof Date) {
+            createdAt = createdAt.toISOString();
+          }
+
+          // If createdAt is missing but orderDate exists (legacy format)
+          if (!createdAt && data.orderDate) {
+            // Check if it's a Firestore Timestamp (has toDate method)
+            if (data.orderDate.toDate) {
+              createdAt = data.orderDate.toDate().toISOString();
+            } else if (data.orderDate instanceof Date) {
+              createdAt = data.orderDate.toISOString();
+            } else {
+              createdAt = new Date().toISOString(); // Fallback
+            }
+          }
+
+          return {
+            id: doc.id,
+            ...data,
+            createdAt: createdAt || new Date().toISOString()
+          };
+        }) as Order[];
+
+        // Sort client-side
+        ordersData.sort((a, b) => 
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+
         setOrders(ordersData);
       } catch (err) {
         console.error('Error fetching orders:', err);
@@ -208,7 +240,7 @@ const OrdersPage: React.FC = () => {
                         <h4 className="text-sm font-medium text-gray-900 mb-2">Shipping Address</h4>
                         <div className="text-sm text-gray-600">
                           <p>{order.shippingAddress.fullName}</p>
-                          <p>{order.shippingAddress.street}</p>
+                          <p>{order.shippingAddress.address}</p>
                           <p>
                             {order.shippingAddress.city}, {order.shippingAddress.state} {order.shippingAddress.pinCode}
                           </p>
